@@ -1,0 +1,21 @@
+[package]
+name = "bingwallpaper"
+version = "1.0.0"
+edition = "2021"
+
+authors = ["Thibault Meyer"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/thibaultmeyer/bingwallpaper"
+repository = "https://github.com/thibaultmeyer/bingwallpaper"
+keywords = ["bing-wallpaper", "wallpaper", "wallpaper-changer", "bing-wallpaper-api"]
+
+include = ["/src", "LICENSE"]
+publish = false
+
+
+[dependencies]
+clap = { version = "4.3.19", features = ["derive"] }
+confy = "0.5.1"
+serde = "1.0.174"
+serde_derive = "1.0.174"
