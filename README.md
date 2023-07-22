@@ -74,7 +74,9 @@ Before attempting to automate the process (see below), it is advisable to run it
             <string>--loop</string>
         </array>
         <key>RunAtLoad</key>
-	<true/>
+        <true/>
+        <key>KeepAlive</key>
+        <true/>
         <key>StandardOutPath</key>
         <string>/tmp/bingwallpaper.log</string>
         <key>StandardErrorPath</key>
