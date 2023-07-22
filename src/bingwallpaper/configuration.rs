@@ -2,6 +2,9 @@ use std::ffi::OsString;
 use std::path::{Path, PathBuf};
 
 use serde_derive::{Deserialize, Serialize};
+use winit::dpi::PhysicalSize;
+use winit::event_loop::EventLoop;
+use winit::window::WindowBuilder;
 
 /// Bing wallpaper application configuration
 #[derive(Serialize, Deserialize)]
@@ -35,10 +38,25 @@ impl Default for BingWallpaperConfiguration {
 /// init_application_configuration_file("/etc/bingwallpaper.conf");
 /// ```
 pub fn init_application_configuration_file(file_name: String) {
-    let config: BingWallpaperConfiguration = BingWallpaperConfiguration::default();
+    // Creates configuration structure
+    let mut config: BingWallpaperConfiguration = BingWallpaperConfiguration::default();
+
+    // Tries to detect best values for image dimensions
+    let event_loop = EventLoop::new();
+    match WindowBuilder::new().build(&event_loop) {
+        Ok(window) => {
+            let monitor_size: PhysicalSize<u32> = window.available_monitors().max().unwrap().size();
+
+            config.image_dimension_width = monitor_size.width;
+            config.image_dimension_height = monitor_size.height;
+        }
+        _ => {}
+    }
+
+    // Creates configuration files
     match confy::store_path(file_name, config) {
         Err(error) => panic!("Can't create configuration file: {:?}", error),
-        _ => {}
+        Ok(_) => println!("Configuration file created"),
     }
 }
 

@@ -1,0 +1,76 @@
+use std::fs::File;
+use std::io::Cursor;
+use std::time::{SystemTime, UNIX_EPOCH};
+
+use reqwest::blocking::Response;
+use serde_derive::Deserialize;
+
+use crate::bingwallpaper::configuration::BingWallpaperConfiguration;
+
+/// Bing API Response, root object.
+#[derive(Deserialize)]
+struct BingAPIResponse {
+    images: Vec<BingAPIImage>,
+}
+
+/// Bing API Response, sub object "Image"
+#[derive(Deserialize)]
+struct BingAPIImage {
+    url: String,
+    title: String,
+    copyright: String,
+    copyrightlink: String,
+}
+
+/// Changes the wallpaper with the picture of the day.
+///
+/// # Arguments
+/// * `configuration` - The application configuration
+///
+/// # Examples
+///
+/// ```
+/// use wallpaper_changer::change_wallpaper;
+/// change_wallpaper(configuration);
+/// ```
+pub fn change_wallpaper(configuration: BingWallpaperConfiguration) {
+
+    // Retrieves JSON document from Bing API
+    let bing_api_endpoint: String = String::from("https://www.bing.com");
+    let time_ms: u128 = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
+    let image_archive_api_uri: String = format!(
+        "{0}/HPImageArchive.aspx?format=js&idx=0&n=1&nc={1}&uhd=1&uhdwidth={2}&uhdheight={3}",
+        bing_api_endpoint,
+        time_ms,
+        configuration.image_dimension_width,
+        configuration.image_dimension_height);
+
+    // Call Bing API
+    let http_response: Response = match reqwest::blocking::get(image_archive_api_uri) {
+        Err(error) => panic!("Can't fetch Bing API: {:?}", error),
+        Ok(http_response) => http_response,
+    };
+
+    let bing_api_response: BingAPIResponse = match http_response.json::<BingAPIResponse>() {
+        Err(error) => panic!("Can't parse JSON: {:?}", error),
+        Ok(bing_api_response) => bing_api_response,
+    };
+
+    println!("Wallpaper information");
+    println!("  - Title    : {}", bing_api_response.images[0].title);
+    println!("  - Copyright: {}", bing_api_response.images[0].copyright);
+    println!("               {}", bing_api_response.images[0].copyrightlink);
+
+    // Download picture
+    let image_content_uri: String = format!("{0}{1}", bing_api_endpoint, bing_api_response.images[0].url);
+    let image_response = reqwest::blocking::get(image_content_uri).unwrap();
+    let mut output_file = File::create(configuration.target_filename).unwrap();
+    let mut image_content = Cursor::new(image_response.bytes().unwrap());
+
+    match std::io::copy(&mut image_content, &mut output_file) {
+        Err(error) => panic!("Can't save wallpaper: {:?}", error),
+        _ => {}
+    }
+
+    // Call private method to change wallpaper
+}
