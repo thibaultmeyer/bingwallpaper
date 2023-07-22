@@ -106,8 +106,14 @@ pub fn change_wallpaper(configuration: &BingWallpaperConfiguration) {
 /// # Arguments
 /// * `file_name` - The picture file name
 #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd"))]
-fn change_wallpaper_linux(_file_name: &String) {
-    panic!("Linux is not yet handled") // TODO: rename _file_name -> file_name
+fn change_wallpaper_linux(file_name: &String) {
+    Command::new("gsettings")
+        .arg("set")
+        .arg("org.gnome.desktop.background")
+        .arg("picture-uri")
+        .arg(file_name)
+        .spawn()
+        .expect("Can't change wallpaper");
 }
 
 /// Changes the wallpaper with the given picture on MacOS.

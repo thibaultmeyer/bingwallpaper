@@ -110,7 +110,7 @@ pub fn load_application_configuration(file_name: Option<String>) -> BingWallpape
 
         match confy::load_path(user_configuration_file) {
             Err(error) => panic!("Can't load or create configuration file: {:?}", error),
-            Ok(configuration) => return configuration,
-        };
+            Ok(configuration) => configuration,
+        }
     }
 }
