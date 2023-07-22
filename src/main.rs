@@ -1,4 +1,6 @@
-use std::process;
+use std::{process, thread};
+use std::thread::{JoinHandle, sleep};
+use std::time::Duration;
 
 use crate::bingwallpaper::{arguments, configuration};
 use crate::bingwallpaper::wallpaper_changer::change_wallpaper;
@@ -21,9 +23,16 @@ fn main() {
     let config = configuration::load_application_configuration(args.config_file);
 
     // Run
-    if args.run_as_daemon == true {
-        println!("Run as daemon is not yet implemented!");
+    if args.must_loop == true {
+        let thread_handle: JoinHandle<()> = thread::Builder::new().name("bingwallpaper".to_string()).spawn(move || {
+            loop {
+                change_wallpaper(&config);
+                sleep(Duration::from_secs(3600));
+            }
+        }).unwrap();
+
+        thread_handle.join().unwrap();
     } else {
-        change_wallpaper(config);
+        change_wallpaper(&config);
     }
 }

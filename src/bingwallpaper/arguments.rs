@@ -4,8 +4,8 @@ use clap::Parser;
 #[derive(Debug, Parser)]
 #[clap(name = "bingwallpaper")]
 pub struct BingWallpaperArguments {
-    #[clap(long = "daemon", short = 'd', help = "Daemonize the application")]
-    pub(crate) run_as_daemon: bool,
+    #[clap(long = "loop", short = 'l', help = "Keep application running. Looking for new wallpaper every hours")]
+    pub(crate) must_loop: bool,
 
     #[clap(long = "config", short = 'c', help = "Use a custom configuration")]
     pub(crate) config_file: Option<String>,

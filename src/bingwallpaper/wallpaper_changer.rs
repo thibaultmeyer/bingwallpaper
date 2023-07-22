@@ -43,7 +43,7 @@ struct BingAPIImage {
 /// change_wallpaper(configuration);
 /// ```
 #[allow(unreachable_code)]
-pub fn change_wallpaper(configuration: BingWallpaperConfiguration) {
+pub fn change_wallpaper(configuration: &BingWallpaperConfiguration) {
 
     // Retrieves JSON document from Bing API
     let bing_api_endpoint: String = String::from("https://www.bing.com");

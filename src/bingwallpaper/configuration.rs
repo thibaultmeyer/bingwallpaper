@@ -54,6 +54,7 @@ pub fn init_application_configuration_file(file_name: String) {
     }
 
     // Creates configuration files
+    println!("Write configuration file into {:?}", file_name);
     match confy::store_path(file_name, config) {
         Err(error) => panic!("Can't create configuration file: {:?}", error),
         Ok(_) => println!("Configuration file created"),
