@@ -1,5 +1,7 @@
+use std::env;
 use std::fs::File;
 use std::io::Cursor;
+use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use reqwest::blocking::Response;
@@ -64,7 +66,7 @@ pub fn change_wallpaper(configuration: BingWallpaperConfiguration) {
     // Download picture
     let image_content_uri: String = format!("{0}{1}", bing_api_endpoint, bing_api_response.images[0].url);
     let image_response = reqwest::blocking::get(image_content_uri).unwrap();
-    let mut output_file = File::create(configuration.target_filename).unwrap();
+    let mut output_file = File::create(&configuration.target_filename).unwrap();
     let mut image_content = Cursor::new(image_response.bytes().unwrap());
 
     match std::io::copy(&mut image_content, &mut output_file) {
@@ -72,5 +74,21 @@ pub fn change_wallpaper(configuration: BingWallpaperConfiguration) {
         _ => {}
     }
 
-    // Call private method to change wallpaper
+    // Call the right method to change wallpaper
+    match env::consts::OS.to_lowercase().as_str() {
+        "macos" => change_wallpaper_macos(&configuration.target_filename),
+        _ => panic!("Your operating system is not handled: {}", env::consts::OS),
+    }
+}
+
+/// Changes the wallpaper with the given picture on MacOS.
+///
+/// # Arguments
+/// * `file_name` - The picture file name
+fn change_wallpaper_macos(file_name: &String) {
+    Command::new("osascript")
+        .arg("-e")
+        .arg(format!("tell application \"Finder\" to set desktop picture to POSIX file \"{0}\"", file_name))
+        .spawn()
+        .expect("Can't change wallpaper");
 }
