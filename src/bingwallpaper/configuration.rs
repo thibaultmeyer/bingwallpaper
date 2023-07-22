@@ -37,6 +37,7 @@ impl Default for BingWallpaperConfiguration {
 /// use configuration::init_application_configuration_file;
 /// init_application_configuration_file("/etc/bingwallpaper.conf");
 /// ```
+#[allow(deprecated)]
 pub fn init_application_configuration_file(file_name: String) {
     // Creates configuration structure
     let mut config: BingWallpaperConfiguration = BingWallpaperConfiguration::default();
@@ -52,6 +53,22 @@ pub fn init_application_configuration_file(file_name: String) {
         }
         _ => {}
     }
+
+    // Target filename ($HOME/.bingwallpaper.png)
+    config.target_filename = std::env::home_dir()
+        .map(PathBuf::into_os_string)
+        .map(OsString::into_string)
+        .map(Result::unwrap)
+        .map(|mut location| {
+            #[cfg(target_os = "macos")]
+            location.push_str("/Pictures/bing-wallpaper.png");
+
+            #[cfg(not(target_os = "macos"))]
+            location.push_str("/.bingwallpaper.png");
+
+            return location;
+        })
+        .unwrap();
 
     // Creates configuration files
     println!("Write configuration file into {:?}", file_name);

@@ -15,6 +15,7 @@ To compile and install this project, you must ensure that Rust and adequate tool
 #> strip ./target/release/bingwallpaper
 
 #> cp ./target/release/bingwallpaper /opt/bingwallpaper
+#> chmod a+x /opt/bingwallpaper
 #> ln -s /opt/bingwallpaper /usr/local/bin/bingwallpaper
 ```
 
@@ -23,8 +24,14 @@ To compile and install this project, you must ensure that Rust and adequate tool
 
 First of all, you need to generate the configuration file. To do this, simply run the following command:
 
+**Linux or MacOS**
 ```shell
-#> bingwallpaper --init-config-file
+#> bingwallpaper --init-config-file ~/.bingwallpaper.conf
+```
+
+**Windows**
+```shell
+#> bingwallpaper --init-config-file C:/Users/<USERNAME>/.bingwallpaper.conf
 ```
 
 The application will try to detect the right settings for your operating system and screen resolution. It is still advisable to check that the information is correct before continuing.
