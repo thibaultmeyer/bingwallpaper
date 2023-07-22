@@ -12,6 +12,9 @@ pub struct BingWallpaperArguments {
 
     #[clap(long = "init-config-file", short = 'i', help = "Initialize a new configuration file")]
     pub(crate) init_config_file: Option<String>,
+
+    #[clap(long = "version", short = 'v', help = "Display application version")]
+    pub(crate) show_version: bool,
 }
 
 /// Parses application arguments.

@@ -1,4 +1,4 @@
-use std::{process, thread};
+use std::{env, process, thread};
 use std::thread::{JoinHandle, sleep};
 use std::time::Duration;
 
@@ -12,6 +12,17 @@ fn main() {
 
     // Parse application arguments
     let args = arguments::parse_application_arguments();
+
+    // If requested, display version
+    if args.show_version {
+        println!(
+            "{} version {} ({}/{})",
+            &env!("CARGO_PKG_NAME"),
+            &env!("CARGO_PKG_VERSION"),
+            env::consts::OS,
+            env::consts::ARCH);
+        process::exit(0);
+    }
 
     // If requested, initialize a new configuration file
     if args.init_config_file.is_some() {
