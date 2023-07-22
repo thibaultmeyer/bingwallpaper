@@ -1,11 +1,18 @@
 use std::env;
+#[cfg(target_os = "windows")]
+use std::ffi::CString;
 use std::fs::File;
 use std::io::Cursor;
+#[cfg(not(target_os = "windows"))]
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use reqwest::blocking::Response;
 use serde_derive::Deserialize;
+#[cfg(target_os = "windows")]
+use winapi::ctypes::c_void;
+#[cfg(target_os = "windows")]
+use winapi::um::winuser;
 
 use crate::bingwallpaper::configuration::BingWallpaperConfiguration;
 
@@ -35,6 +42,7 @@ struct BingAPIImage {
 /// use wallpaper_changer::change_wallpaper;
 /// change_wallpaper(configuration);
 /// ```
+#[allow(unreachable_code)]
 pub fn change_wallpaper(configuration: BingWallpaperConfiguration) {
 
     // Retrieves JSON document from Bing API
@@ -75,20 +83,61 @@ pub fn change_wallpaper(configuration: BingWallpaperConfiguration) {
     }
 
     // Call the right method to change wallpaper
-    match env::consts::OS.to_lowercase().as_str() {
-        "macos" => change_wallpaper_macos(&configuration.target_filename),
-        _ => panic!("Your operating system is not handled: {}", env::consts::OS),
+    #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd"))] {
+        change_wallpaper_linux(&configuration.target_filename);
+        return;
     }
+
+    #[cfg(target_os = "macos")] {
+        change_wallpaper_macos(&configuration.target_filename);
+        return;
+    }
+
+    #[cfg(target_os = "windows")] {
+        change_wallpaper_windows(&configuration.target_filename);
+        return;
+    }
+
+    // Error
+    panic!("Your operating system is not handled: {}", env::consts::OS)
+}
+
+/// Changes the wallpaper with the given picture on Linux.
+///
+/// # Arguments
+/// * `file_name` - The picture file name
+#[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd"))]
+fn change_wallpaper_linux(_file_name: &String) {
+    panic!("Linux is not yet handled") // TODO: rename _file_name -> file_name
 }
 
 /// Changes the wallpaper with the given picture on MacOS.
 ///
 /// # Arguments
 /// * `file_name` - The picture file name
+#[cfg(target_os = "macos")]
 fn change_wallpaper_macos(file_name: &String) {
     Command::new("osascript")
         .arg("-e")
         .arg(format!("tell application \"Finder\" to set desktop picture to POSIX file \"{0}\"", file_name))
         .spawn()
         .expect("Can't change wallpaper");
+}
+
+/// Changes the wallpaper with the given picture on Windows.
+///
+/// # Arguments
+/// * `file_name` - The picture file name
+#[cfg(target_os = "windows")]
+fn change_wallpaper_windows(file_name: &String) {
+    let image_path = CString::new(String::from(file_name)).unwrap();
+
+    unsafe {
+        winuser::SystemParametersInfoA(
+            winuser::SPI_SETDESKWALLPAPER,
+            0,
+            image_path.as_ptr() as *mut c_void,
+            winuser::SPIF_UPDATEINIFILE,
+        );
+    }
 }
