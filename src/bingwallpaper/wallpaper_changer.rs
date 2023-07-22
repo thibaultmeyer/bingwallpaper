@@ -77,9 +77,8 @@ pub fn change_wallpaper(configuration: &BingWallpaperConfiguration) {
     let mut output_file = File::create(&configuration.target_filename).unwrap();
     let mut image_content = Cursor::new(image_response.bytes().unwrap());
 
-    match std::io::copy(&mut image_content, &mut output_file) {
-        Err(error) => panic!("Can't save wallpaper: {:?}", error),
-        _ => {}
+    if let Err(error) = std::io::copy(&mut image_content, &mut output_file) {
+        panic!("Can't save wallpaper: {:?}", error);
     }
 
     // Call the right method to change wallpaper

@@ -34,7 +34,7 @@ fn main() {
     let config = configuration::load_application_configuration(args.config_file);
 
     // Run
-    if args.must_loop == true {
+    if args.must_loop {
         let thread_handle: JoinHandle<()> = thread::Builder::new().name("bingwallpaper".to_string()).spawn(move || {
             loop {
                 change_wallpaper(&config);

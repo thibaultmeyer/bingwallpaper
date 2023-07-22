@@ -26,5 +26,5 @@ pub struct BingWallpaperArguments {
 /// let args = parse_application_arguments();
 /// ```
 pub fn parse_application_arguments() -> BingWallpaperArguments {
-    return BingWallpaperArguments::parse();
+    BingWallpaperArguments::parse()
 }

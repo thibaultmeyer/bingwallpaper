@@ -44,14 +44,11 @@ pub fn init_application_configuration_file(file_name: String) {
 
     // Tries to detect best values for image dimensions
     let event_loop = EventLoop::new();
-    match WindowBuilder::new().build(&event_loop) {
-        Ok(window) => {
-            let monitor_size: PhysicalSize<u32> = window.available_monitors().max().unwrap().size();
+    if let Ok(window) = WindowBuilder::new().build(&event_loop) {
+        let monitor_size: PhysicalSize<u32> = window.available_monitors().max().unwrap().size();
 
-            config.image_dimension_width = monitor_size.width;
-            config.image_dimension_height = monitor_size.height;
-        }
-        _ => {}
+        config.image_dimension_width = monitor_size.width;
+        config.image_dimension_height = monitor_size.height;
     }
 
     // Target filename ($HOME/.bingwallpaper.png)
@@ -66,7 +63,7 @@ pub fn init_application_configuration_file(file_name: String) {
             #[cfg(not(target_os = "macos"))]
             location.push_str("/.bingwallpaper.png");
 
-            return location;
+            location
         })
         .unwrap();
 
@@ -92,8 +89,8 @@ pub fn init_application_configuration_file(file_name: String) {
 /// ```
 #[allow(deprecated)]
 pub fn load_application_configuration(file_name: Option<String>) -> BingWallpaperConfiguration {
-    return if file_name.is_some() {
-        confy::load_path(file_name.unwrap()).unwrap()
+    if let Some(value) = file_name {
+        confy::load_path(value).unwrap()
     } else {
         let user_configuration_file: String = std::env::home_dir()
             .map(PathBuf::into_os_string)
@@ -101,20 +98,19 @@ pub fn load_application_configuration(file_name: Option<String>) -> BingWallpape
             .map(Result::unwrap)
             .map(|mut location| {
                 location.push_str("/.bingwallpaper.conf");
-                return location;
+                location
             })
             .filter(|location| Path::new(location.as_str()).exists())
-            .or(Some(String::from("/etc/bingwallpaper.conf")))
-            .unwrap();
+            .unwrap_or(String::from("/etc/bingwallpaper.conf"));
 
 
-        if Path::new(user_configuration_file.as_str()).exists() == false {
+        if !Path::new(user_configuration_file.as_str()).exists() {
             panic!("Configuration file does not exist: {:?}", user_configuration_file)
         }
 
-        return match confy::load_path(user_configuration_file) {
+        match confy::load_path(user_configuration_file) {
             Err(error) => panic!("Can't load or create configuration file: {:?}", error),
-            Ok(configuration) => configuration,
+            Ok(configuration) => return configuration,
         };
-    };
+    }
 }
