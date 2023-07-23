@@ -42,7 +42,7 @@ impl BingAPIClient {
     ///
     /// ```
     /// use bingwallpaper::BingAPIClient;
-    /// let instance = BingAPIClient::new()
+    /// let instance = BingAPIClient::new();
     /// ```
     #[must_use]
     pub fn new() -> BingAPIClient {
@@ -52,6 +52,19 @@ impl BingAPIClient {
     }
 
     /// Retrieves the latest image from the images archive.
+    ///
+    /// # Arguments
+    /// * `img_dimension_width` - Requested image dimension "width"
+    /// * `img_dimension_height` - Requested image dimension "height"
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bingwallpaper::BingAPIClient;
+    /// let instance = BingAPIClient::new();
+    ///
+    /// let img = instance.retrieve_latest_image(image, 1920, 1080);
+    /// ```
     pub fn retrieve_latest_image(&self, img_dimension_width: u32, img_dimension_height: u32) -> Result<BingAPIImagesArchiveImage, String> {
 
         // Build URI to call
@@ -87,6 +100,20 @@ impl BingAPIClient {
         })
     }
 
+    /// Downloads image.
+    ///
+    /// # Arguments
+    /// * `image` - The image to download
+    /// * `target` - The location where to save image
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bingwallpaper::BingAPIClient;
+    /// let instance = BingAPIClient::new();
+    ///
+    /// instance.download_image(image, "/tmp/out.png");
+    /// ```
     pub fn download_image(&self, image: &BingAPIImagesArchiveImage, target: &String) -> Result<(), String> {
         let image_content_uri: String = format!("{0}{1}", self.api_endpoint, image.url);
         let image_response = reqwest::blocking::get(image_content_uri).unwrap();
