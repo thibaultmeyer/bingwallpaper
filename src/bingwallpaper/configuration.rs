@@ -40,6 +40,11 @@ impl BingWallpaperConfiguration {
     /// ```
     #[allow(deprecated)]
     pub fn init_file(file_name_option: Option<String>) {
+
+        // Resolves file name to use
+        let file_name = BingWallpaperConfiguration::resolve_file_path(file_name_option);
+        println!("Creating configuration file {:?}... Please wait!", file_name);
+
         // Creates configuration structure
         let mut config: BingWallpaperConfiguration = BingWallpaperConfiguration::default();
 
@@ -51,6 +56,8 @@ impl BingWallpaperConfiguration {
             config.image_dimension_width = monitor_size.width;
             config.image_dimension_height = monitor_size.height;
         }
+
+        println!("  > Wallpaper dimension: {}x{}", config.image_dimension_width, config.image_dimension_height);
 
         // Target filename ($HOME/.bingwallpaper.png)
         config.target_filename = std::env::home_dir()
@@ -68,13 +75,12 @@ impl BingWallpaperConfiguration {
             })
             .unwrap();
 
-        // Creates configuration files
-        let file_name = BingWallpaperConfiguration::resolve_file_path(file_name_option);
-        println!("Write configuration file into {:?}", file_name);
+        println!("  > Target location: {}", config.target_filename);
 
+        // Creates configuration files
         match confy::store_path(file_name, config) {
             Err(error) => panic!("Can't create configuration file: {:?}", error),
-            Ok(_) => println!("Configuration file created"),
+            Ok(_) => println!("Configuration file created!"),
         }
     }
 
