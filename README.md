@@ -2,6 +2,10 @@
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/thibaultmeyer/bingwallpaper/blob/master/LICENSE)
 [![Repository release](https://img.shields.io/github/v/release/thibaultmeyer/bingwallpaper?logo=github)](https://github.com/voidframework/voidframework/releases)
+[![Repository size](https://img.shields.io/github/repo-size/thibaultmeyer/bingwallpaper.svg?logo=git)](https://github.com/thibaultmeyer/bingwallpaper)
+
+[![Java CI](https://img.shields.io/github/actions/workflow/status/thibaultmeyer/bingwallpaper/build.yml?logo=github&color=%231da868&branch=main)](https://github.com/thibaultmeyer/bingwallpaper/actions/workflows/build.yml)
+
 
 Bing wallpaper of the day
 *****
