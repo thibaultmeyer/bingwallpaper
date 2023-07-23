@@ -49,6 +49,19 @@ impl BingWallpaperChanger {
 
     /// Tries to download and applies wallpaper of the day.
     pub fn try_change(&self) -> Result<(), String> {
+        self.process(true)
+    }
+
+    /// Tries to download the wallpaper of the day.
+    pub fn try_download(&self) -> Result<(), String> {
+        self.process(false)
+    }
+
+    /// Do job.
+    ///
+    /// # Arguments
+    /// * `must_change_wallpaper` - `true` to change wallpaper after download
+    fn process(&self, must_change_wallpaper: bool) -> Result<(), String> {
         let system_date_as_str = self.get_date_system();
         let wallpaper_date_as_str = self.get_date_current_wallpaper();
 
@@ -75,13 +88,12 @@ impl BingWallpaperChanger {
             self.bing_api_client.download_image(&bing_image, &self.configuration.target_filename)?;
         }
 
-        // Change current wallpaper
-        self.change_wallpaper()
-    }
+        // Change current wallpaper (if requested)
+        if must_change_wallpaper {
+            return self.change_wallpaper();
+        }
 
-    /// Tries to download the wallpaper of the day.
-    pub fn try_download(&self) -> Result<(), String> {
-        Err(String::from("cou"))
+        Ok(())
     }
 
     /// Returns the system date (UTC) as a String following the format "%Y%m%d".
