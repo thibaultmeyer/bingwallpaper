@@ -26,6 +26,30 @@ jobs:
                     rustup component add clippy
                     cargo clippy
 
+    MacOS:
+        name: Build on MacOS
+        runs-on: macos-latest
+        steps:
+            -   name: Clone repository
+                uses: actions/checkout@v3
+
+            -   name: Create Build Environment
+                uses: ATiltedTree/setup-rust@v1
+                with:
+                    rust-version: stable
+
+            -   name: Build
+                working-directory: ${{github.workspace}}
+                shell: bash
+                run: cargo build
+
+            -   name: Lint
+                working-directory: ${{github.workspace}}
+                shell: bash
+                run: |
+                    rustup component add clippy
+                    cargo clippy
+
     Windows:
         name: Build on Windows
         runs-on: windows-latest
