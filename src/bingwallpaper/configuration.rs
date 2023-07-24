@@ -40,7 +40,6 @@ impl BingWallpaperConfiguration {
     /// ```
     #[allow(deprecated)]
     pub fn init_file(file_name_option: Option<String>) {
-
         // Resolves file name to use
         let file_name = BingWallpaperConfiguration::resolve_file_path(file_name_option);
         println!("Creating configuration file {:?}... Please wait!", file_name);

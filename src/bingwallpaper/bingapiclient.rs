@@ -66,7 +66,6 @@ impl BingAPIClient {
     /// let img = instance.retrieve_latest_image(image, 1920, 1080);
     /// ```
     pub fn retrieve_latest_image(&self, img_dimension_width: u32, img_dimension_height: u32) -> Result<BingAPIImagesArchiveImage, String> {
-
         // Build URI to call
         let time_ms = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
         let image_archive_api_uri: String = format!(

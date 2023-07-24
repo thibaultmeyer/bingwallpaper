@@ -1,7 +1,7 @@
 # bingwallpaper
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/thibaultmeyer/bingwallpaper/blob/master/LICENSE)
-[![Repository release](https://img.shields.io/github/v/release/thibaultmeyer/bingwallpaper?logo=github)](https://github.com/voidframework/voidframework/releases)
+[![Repository release](https://img.shields.io/github/v/release/thibaultmeyer/bingwallpaper?logo=github)](https://github.com/thibaultmeyer/bingwallpaper/releases)
 [![Repository size](https://img.shields.io/github/repo-size/thibaultmeyer/bingwallpaper.svg?logo=git)](https://github.com/thibaultmeyer/bingwallpaper)
 
 [![Java CI](https://img.shields.io/github/actions/workflow/status/thibaultmeyer/bingwallpaper/build.yml?logo=github&color=%231da868&branch=main)](https://github.com/thibaultmeyer/bingwallpaper/actions/workflows/build.yml)
@@ -64,7 +64,7 @@ Before attempting to automate the process (see below), it is advisable to run it
 
 
 ### MacOS
-**com.github.thibaultmeyer.bingwallpaper.plist**
+**~/Library/LaunchAgents/com.github.thibaultmeyer.bingwallpaper.plist**
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
