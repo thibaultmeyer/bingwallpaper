@@ -1,5 +1,11 @@
 #[cfg(target_os = "windows")]
 use std::ffi::CString;
+#[cfg(target_os = "macos")]
+use std::fs;
+#[cfg(target_os = "macos")]
+use std::fs::File;
+#[cfg(target_os = "macos")]
+use std::io::Write;
 use std::path::Path;
 #[cfg(not(target_os = "windows"))]
 use std::process::Command;
@@ -150,13 +156,37 @@ impl BingWallpaperChanger {
     /// Changes the wallpaper with the given picture on MacOS.
     #[cfg(target_os = "macos")]
     fn change_wallpaper_macos(&self) {
-        Command::new("osascript")
-            .arg("-e")
-            .arg(format!(
-                "tell application \"Finder\" to set desktop picture to POSIX file \"{0}\"",
-                self.configuration.target_filename))
+        // MacOS does not refresh the screen if the file name of
+        // the new wallpaper is the same as the old one.
+        let swift_script_path = Path::new("/tmp/bingwallpaper.swift");
+        let mut file = File::create(swift_script_path).unwrap();
+        file.write_all("import Cocoa
+            do {
+                if let screen = NSScreen.main {
+                    let url = URL(fileURLWithPath: CommandLine.arguments[1])
+                    try NSWorkspace.shared.setDesktopImageURL(url, for: screen, options: [:])
+                }
+            } catch {
+                print(error)
+            }".as_bytes()).unwrap();
+
+        let tmp_filename = format!("/tmp/{0}", self.get_date_system());
+        fs::copy(self.configuration.target_filename.as_str(), &tmp_filename).unwrap();
+        Command::new("swift")
+            .arg("/tmp/bingwallpaper.swift")
+            .arg(&tmp_filename)
             .spawn()
             .expect("Can't change wallpaper");
+
+        Command::new("swift")
+            .arg("/tmp/bingwallpaper.swift")
+            .arg(&self.configuration.target_filename)
+            .spawn()
+            .expect("Can't change wallpaper");
+
+        std::thread::sleep(std::time::Duration::from_secs(2));
+        fs::remove_file(&tmp_filename).unwrap();
+        fs::remove_file(swift_script_path).unwrap();
     }
 
     /// Changes the wallpaper with the given picture on Windows.
