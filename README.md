@@ -24,7 +24,34 @@ To compile and install this project, you must ensure that Rust and adequate tool
 ```
 
 
+
 ## Usage
+
+```shell
+#> bingwallpaper --help
+Bing wallpaper application arguments
+
+Usage: bingwallpaper [OPTIONS]
+
+Options:
+  -l, --loop
+          Keep application running. Looking for new wallpaper every hours
+  -c, --config <CONFIG_FILE>
+          Use a custom configuration
+  -i, --init-config-file <INIT_CONFIG_FILE>
+          Initialize a new configuration file
+  -o, --download-only
+          Download wallpaper, but dont try to change it automatically
+  -v, --version
+          Display application version
+  -h, --help
+          Print help
+
+```
+
+
+
+## First run
 
 First of all, you need to generate the configuration file. To do this, simply run the following command:
 
