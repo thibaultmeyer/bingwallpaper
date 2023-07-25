@@ -49,7 +49,7 @@ fn main() {
                     println!("Can't change wallpaper: {:?}", error);
                 }
 
-                sleep(Duration::from_secs(300));
+                sleep(Duration::from_secs(900));
             }
         }).unwrap();
 
