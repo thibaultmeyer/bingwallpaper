@@ -12,6 +12,7 @@ pub struct BingWallpaperConfiguration {
     pub(crate) image_dimension_width: u32,
     pub(crate) image_dimension_height: u32,
     pub(crate) target_filename: String,
+    pub(crate) proxy_url: Option<String>,
 }
 
 
@@ -22,6 +23,7 @@ impl Default for BingWallpaperConfiguration {
             image_dimension_height: 1080,
             image_dimension_width: 1920,
             target_filename: "/tmp/bingwallpaper.png".into(),
+            proxy_url: None,
         }
     }
 }

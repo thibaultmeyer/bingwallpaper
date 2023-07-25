@@ -12,6 +12,7 @@ use std::process::Command;
 use std::time::SystemTime;
 
 use chrono::{DateTime, Utc};
+
 #[cfg(target_os = "windows")]
 use winapi::ctypes::c_void;
 #[cfg(target_os = "windows")]
@@ -47,9 +48,11 @@ impl BingWallpaperChanger {
     /// ```
     #[must_use]
     pub fn new(configuration: BingWallpaperConfiguration) -> BingWallpaperChanger {
+        let proxy_url = configuration.proxy_url.clone();
+
         BingWallpaperChanger {
             configuration,
-            bing_api_client: BingAPIClient::new(),
+            bing_api_client: BingAPIClient::new(proxy_url),
         }
     }
 

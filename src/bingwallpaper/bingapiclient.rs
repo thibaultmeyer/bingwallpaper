@@ -1,12 +1,14 @@
 use std::fs::File;
 use std::io::Cursor;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
+use reqwest::blocking::Client;
 use serde_derive::Deserialize;
 
 /// Bing API HTTP client.
 pub struct BingAPIClient {
     api_endpoint: String,
+    http_client: Client,
 }
 
 /// Bing API "Images Archives": root object.
@@ -38,6 +40,9 @@ pub struct BingAPIImagesArchiveImage {
 impl BingAPIClient {
     /// Creates a new instance.
     ///
+    /// # Arguments
+    /// * `proxy_url` - URL to the proxy to use (ie: http://proxy-ip:8080)
+    ///
     /// # Examples
     ///
     /// ```
@@ -45,9 +50,23 @@ impl BingAPIClient {
     /// let instance = BingAPIClient::new();
     /// ```
     #[must_use]
-    pub fn new() -> BingAPIClient {
+    pub fn new(proxy_url: Option<String>) -> BingAPIClient {
+        // Configures HTTP client
+        let mut client_builder = Client::builder()
+            .timeout(Duration::from_secs(15))
+            .connect_timeout(Duration::from_secs(10))
+            .pool_idle_timeout(Duration::from_secs(35))
+            .pool_max_idle_per_host(1);
+
+        if let Some(value) = proxy_url {
+            let proxy = reqwest::Proxy::all(value).unwrap();
+            client_builder = client_builder.proxy(proxy)
+        }
+
+        // Creates new instance
         BingAPIClient {
-            api_endpoint: String::from("https://www.bing.com")
+            api_endpoint: String::from("https://www.bing.com"),
+            http_client: client_builder.build().unwrap(),
         }
     }
 
@@ -76,7 +95,7 @@ impl BingAPIClient {
             img_dimension_height);
 
         // Call Bing API
-        let http_response = match reqwest::blocking::get(image_archive_api_uri) {
+        let http_response = match self.http_client.get(image_archive_api_uri).send() {
             Err(error) => return Err(format!("Can't fetch Bing API: {:?}", error)),
             Ok(http_response) => http_response,
         };
@@ -90,7 +109,7 @@ impl BingAPIClient {
         // Returns the latest image
         let image = image_archive.images.get(0).unwrap();
 
-        Ok(BingAPIImagesArchiveImage { // TODO: possible to implement ".clone()" or ".copy" method ????
+        Ok(BingAPIImagesArchiveImage {
             url: image.url.clone(),
             title: image.title.clone(),
             copyright: image.copyright.clone(),
@@ -115,7 +134,7 @@ impl BingAPIClient {
     /// ```
     pub fn download_image(&self, image: &BingAPIImagesArchiveImage, target: &String) -> Result<(), String> {
         let image_content_uri: String = format!("{0}{1}", self.api_endpoint, image.url);
-        let image_response = reqwest::blocking::get(image_content_uri).unwrap();
+        let image_response = self.http_client.get(image_content_uri).send().unwrap();
         let mut output_file = File::create(target).unwrap();
         let mut image_content = Cursor::new(image_response.bytes().unwrap());
 

@@ -74,6 +74,16 @@ Once the configuration file has been checked. Run the following command to chang
 ```
 
 
+## Configuration file
+
+* `image_dimension_width` The "width" dimension of the wallpaper
+* `image_dimension_height` The "height" dimension of the wallpaper
+* `target_filename` The location where is stored the wallpaper
+* `proxy_url` (OPTIONAL) The proxy URL (ie: http://127.0.0.1:8080)
+
+**Note:** You can use "#" to comment a line
+
+
 
 ## Change wallpaper automatically
 
