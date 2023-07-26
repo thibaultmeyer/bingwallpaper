@@ -47,7 +47,7 @@ impl BingAPIClient {
     ///
     /// ```
     /// use bingwallpaper::BingAPIClient;
-    /// let instance = BingAPIClient::new();
+    /// let instance = BingAPIClient::new(proxy_url);
     /// ```
     #[must_use]
     pub fn new(proxy_url: Option<String>) -> BingAPIClient {
