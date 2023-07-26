@@ -1,0 +1,188 @@
+name: Package
+
+on:
+    release:
+        types: [published]
+
+env:
+    REPO_NAME: thibaultmeyer/bingwallpaper
+
+jobs:
+    linux-build:
+        name: Release for Linux
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Clone repository
+                uses: actions/checkout@v3
+
+            -   name: Build
+                uses: actions-rs/cargo@v1
+                with:
+                    command: build
+                    args: --release
+
+            -   name: Minify binary
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: |
+                    ls -l bingwallpaper
+                    strip bingwallpaper
+                    ls -l bingwallpaper
+
+            -   name: Rename file
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: mv bingwallpaper bingwallpaper-linux-$(uname -m)
+
+            -   name: Checksum
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: cat bingwallpaper-linux-$(uname -m) | md5sum > bingwallpaper-linux-$(uname -m).md5
+
+            -   name: Retrieve release ID
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: |
+                    curl -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" https://api.github.com/repos/$REPO_NAME/releases | jq  ".[].id" | head -n1 > release_id
+
+            -   name: Upload binary
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: |
+                    export RELEASE_ID=`cat release_id`
+                    export FILE="bingwallpaper-linux-$(uname -m)"
+                    export FILE_SIZE=`find $FILE -printf "%s"`
+
+                    curl --request POST -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" -H "Content-Type: application/octet-stream" -H "Content-Length: $FILE_SIZE" \
+                        --data-binary @$FILE "https://uploads.github.com/repos/$REPO_NAME/releases/$RELEASE_ID/assets?name=$FILE"
+
+            -   name: Upload checksum
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: |
+                    export RELEASE_ID=`cat release_id`
+                    export FILE="bingwallpaper-linux-$(uname -m).md5"
+                    export FILE_SIZE=`find $FILE -printf "%s"`
+
+                    curl --request POST -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" -H "Content-Type: application/octet-stream" -H "Content-Length: $FILE_SIZE" \
+                        --data-binary @$FILE "https://uploads.github.com/repos/$REPO_NAME/releases/$RELEASE_ID/assets?name=$FILE"
+
+
+    macos-build:
+        name: Release for MacOS
+        runs-on: macos-latest
+        steps:
+            -   name: Clone repository
+                uses: actions/checkout@v3
+
+            -   name: Build
+                uses: actions-rs/cargo@v1
+                with:
+                    command: build
+                    args: --release
+
+            -   name: Minify binary
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: |
+                    ls -l bingwallpaper
+                    strip bingwallpaper
+                    ls -l bingwallpaper
+
+            -   name: Rename file
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: mv bingwallpaper bingwallpaper-macos-$(uname -m)
+
+            -   name: Checksum
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: cat bingwallpaper-macos-$(uname -m) | md5 > bingwallpaper-macos-$(uname -m).md5
+
+            -   name: Retrieve release ID
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: |
+                    curl -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" https://api.github.com/repos/$REPO_NAME/releases | jq  ".[].id" | head -n1 > release_id
+
+            -   name: Upload binary
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: |
+                    export RELEASE_ID=`cat release_id`
+                    export FILE="bingwallpaper-macos-$(uname -m)"
+                    export FILE_SIZE=`stat -f%z $FILE`
+
+                    curl --request POST -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" -H "Content-Type: application/octet-stream" -H "Content-Length: $FILE_SIZE" \
+                        --data-binary @$FILE "https://uploads.github.com/repos/$REPO_NAME/releases/$RELEASE_ID/assets?name=$FILE"
+
+            -   name: Upload checksum
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: |
+                    export RELEASE_ID=`cat release_id`
+                    export FILE="bingwallpaper-macos-$(uname -m).md5"
+                    export FILE_SIZE=`stat -f%z $FILE`
+
+                    curl --request POST -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" -H "Content-Type: application/octet-stream" -H "Content-Length: $FILE_SIZE" \
+                        --data-binary @$FILE "https://uploads.github.com/repos/$REPO_NAME/releases/$RELEASE_ID/assets?name=$FILE"
+
+
+    windows-build:
+        name: Release for Windows
+        runs-on: windows-latest
+        steps:
+            -   name: Clone repository
+                uses: actions/checkout@v3
+
+            -   name: Build
+                uses: actions-rs/cargo@v1
+                with:
+                    command: build
+                    args: --release
+
+            -   name: Add Icon
+                working-directory: ${{github.workspace}}/target/release/
+                shell: pwsh
+                run: |
+                    Invoke-WebRequest -Uri "http://www.angusj.com/resourcehacker/resource_hacker.zip" -OutFile "resource_hacker.zip"
+                    Expand-Archive resource_hacker.zip -DestinationPath .
+                    .\ResourceHacker.exe -open bingwallpaper.exe -save with_icon.exe -action addskip -res ..\..\res\icon\gallery-256-win-icon.ico -mask ICONGROUP,MAINICON,
+
+            -   name: Rename file
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: mv with_icon.exe bingwallpaper-windows-$(uname -m).exe
+
+            -   name: Checksum
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: cat bingwallpaper-windows-$(uname -m).exe | md5sum > bingwallpaper-windows-$(uname -m).md5
+
+            -   name: Retrieve release ID
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: |
+                    curl -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" https://api.github.com/repos/$REPO_NAME/releases | jq  ".[].id" | head -n1 > release_id
+
+            -   name: Upload binary
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: |
+                    export RELEASE_ID=`cat release_id`
+                    export FILE="bingwallpaper-windows-$(uname -m).exe"
+                    export FILE_SIZE=`find $FILE -printf "%s"`
+
+                    curl --request POST -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" -H "Content-Type: application/octet-stream" -H "Content-Length: $FILE_SIZE" \
+                        --data-binary @$FILE "https://uploads.github.com/repos/$REPO_NAME/releases/$RELEASE_ID/assets?name=$FILE"
+
+            -   name: Upload checksum
+                working-directory: ${{github.workspace}}/target/release/
+                shell: bash
+                run: |
+                    export RELEASE_ID=`cat release_id`
+                    export FILE="bingwallpaper-windows-$(uname -m).md5"
+                    export FILE_SIZE=`find $FILE -printf "%s"`
+
+                    curl --request POST -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" -H "Content-Type: application/octet-stream" -H "Content-Length: $FILE_SIZE" \
+                        --data-binary @$FILE "https://uploads.github.com/repos/$REPO_NAME/releases/$RELEASE_ID/assets?name=$FILE"

@@ -71,8 +71,3 @@ jobs:
                 run: |
                     rustup component add clippy
                     cargo clippy
-
-# http://www.angusj.com/resourcehacker/resource_hacker.zip
-# unzip & rename to rh.exe
-# mv bingwallpaper.exe old.exe
-# rh.exe -open old.exe -save bingwallpaper.exe -action addskip -res gallery-256-win-icon.ico -mask ICONGROUP,MAINICON,
