@@ -55,10 +55,12 @@ Options:
 
 First of all, you need to generate the configuration file. To do this, simply run the following command:
 
+
 **Linux or MacOS**
 ```shell
 #> bingwallpaper --init-config-file ~/.bingwallpaper.conf
 ```
+
 
 **Windows**
 ```shell
@@ -72,6 +74,7 @@ Once the configuration file has been checked. Run the following command to chang
 ```shell
 #> bingwallpaper [--loop] [--config <alternative cfg file>]
 ```
+
 
 
 ## Configuration file
@@ -88,6 +91,7 @@ Once the configuration file has been checked. Run the following command to chang
 ## Change wallpaper automatically
 
 Before attempting to automate the process (see below), it is advisable to run it manually at least once to check that everything is working correctly.
+
 
 ### Linux
 
@@ -130,3 +134,9 @@ Before attempting to automate the process (see below), it is advisable to run it
 
 ## License
 This project is released under terms of the [MIT license](https://github.com/thibaultmeyer/bingwallpaper/blob/master/LICENSE).
+
+
+
+## Third party
+Logo is from [Flaticon](https://www.flaticon.com) with
+free usage for personal and commercial purpose. <a href="https://www.flaticon.com/free-icons/gallery" title="gallery icons">Gallery icons created by logisstudio - Flaticon</a>
