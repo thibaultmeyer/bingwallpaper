@@ -143,11 +143,11 @@ jobs:
 
             -   name: Add Icon
                 working-directory: ${{github.workspace}}/target/release/
-                shell: pwsh
+                shell: bash
                 run: |
-                    Invoke-WebRequest -Uri "http://www.angusj.com/resourcehacker/resource_hacker.zip" -OutFile "resource_hacker.zip"
-                    Expand-Archive resource_hacker.zip -DestinationPath .
-                    .\ResourceHacker.exe -open bingwallpaper.exe -save with_icon.exe -action addskip -res ..\..\res\icon\gallery-256-win-icon.ico -mask ICONGROUP,MAINICON,
+                    curl -L -o resource_hacker.zip http://www.angusj.com/resourcehacker/resource_hacker.zip
+                    unzip resource_hacker.zip
+                    ./ResourceHacker.exe -open bingwallpaper.exe -save with_icon.exe -action addskip -res ../../res/icon/gallery-256-win-icon.ico -mask ICONGROUP,MAINICON,
 
             -   name: Rename file
                 working-directory: ${{github.workspace}}/target/release/
