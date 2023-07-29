@@ -163,9 +163,10 @@ impl BingWallpaperChanger {
         // the new wallpaper is the same as the old one.
         let swift_script_path = Path::new("/tmp/bingwallpaper.swift");
         let mut file = File::create(swift_script_path).unwrap();
+        // Read more: https://developer.apple.com/documentation/appkit/nsscreen/1388393-screens
         file.write_all("import Cocoa
             do {
-                if let screen = NSScreen.main {
+                for screen in NSScreen.screens {
                     let url = URL(fileURLWithPath: CommandLine.arguments[1])
                     try NSWorkspace.shared.setDesktopImageURL(url, for: screen, options: [:])
                 }
