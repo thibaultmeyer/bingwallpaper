@@ -88,9 +88,9 @@ impl BingWallpaperChanger {
         };
 
         println!("Wallpaper information");
-        println!("  - Title    : {}", bing_image.title);
-        println!("  - Copyright: {}", bing_image.copyright);
-        println!("               {}", bing_image.copyrightlink);
+        println!("  - Title    : {}", &bing_image.title);
+        println!("  - Copyright: {}", &bing_image.copyright);
+        println!("               {}", &bing_image.copyrightlink);
 
         if wallpaper_date_as_str.contains("00000000") || bing_image.startdate != system_date_as_str {
             // Downloads image
@@ -159,8 +159,7 @@ impl BingWallpaperChanger {
     /// Changes the wallpaper with the given picture on MacOS.
     #[cfg(target_os = "macos")]
     fn change_wallpaper_macos(&self) {
-        // MacOS does not refresh the screen if the file name of
-        // the new wallpaper is the same as the old one.
+        // Writes script SWIFT used to change wallpaper into temporary location
         let swift_script_path = Path::new("/tmp/bingwallpaper.swift");
         let mut file = File::create(swift_script_path).unwrap();
         // Read more: https://developer.apple.com/documentation/appkit/nsscreen/1388393-screens
@@ -174,6 +173,8 @@ impl BingWallpaperChanger {
                 print(error)
             }".as_bytes()).unwrap();
 
+        // MacOS does not refresh the screen if the file name of
+        // the new wallpaper is the same as the old one.
         let tmp_filename = format!("/tmp/{0}", self.get_date_system());
         fs::copy(self.configuration.target_filename.as_str(), &tmp_filename).unwrap();
         Command::new("swift")
@@ -181,14 +182,16 @@ impl BingWallpaperChanger {
             .arg(&tmp_filename)
             .spawn()
             .expect("Can't change wallpaper");
+        std::thread::sleep(std::time::Duration::from_millis(250));
 
+        // Uses the real file
         Command::new("swift")
             .arg("/tmp/bingwallpaper.swift")
             .arg(&self.configuration.target_filename)
             .spawn()
             .expect("Can't change wallpaper");
 
-        std::thread::sleep(std::time::Duration::from_secs(2));
+        std::thread::sleep(std::time::Duration::from_secs(1));
         fs::remove_file(&tmp_filename).unwrap();
         fs::remove_file(swift_script_path).unwrap();
     }

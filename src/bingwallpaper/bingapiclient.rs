@@ -89,10 +89,10 @@ impl BingAPIClient {
         let time_ms = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
         let image_archive_api_uri: String = format!(
             "{0}/HPImageArchive.aspx?format=js&idx=0&n=1&nc={1}&uhd=1&uhdwidth={2}&uhdheight={3}",
-            self.api_endpoint,
-            time_ms,
-            img_dimension_width,
-            img_dimension_height);
+            &self.api_endpoint,
+            &time_ms,
+            &img_dimension_width,
+            &img_dimension_height);
 
         // Call Bing API
         let http_response = match self.http_client.get(image_archive_api_uri).send() {
@@ -133,7 +133,7 @@ impl BingAPIClient {
     /// instance.download_image(image, "/tmp/out.png");
     /// ```
     pub fn download_image(&self, image: &BingAPIImagesArchiveImage, target: &String) -> Result<(), String> {
-        let image_content_uri: String = format!("{0}{1}", self.api_endpoint, image.url);
+        let image_content_uri: String = format!("{0}{1}", &self.api_endpoint, &image.url);
         let image_response = self.http_client.get(image_content_uri).send().unwrap();
         let mut output_file = File::create(target).unwrap();
         let mut image_content = Cursor::new(image_response.bytes().unwrap());
