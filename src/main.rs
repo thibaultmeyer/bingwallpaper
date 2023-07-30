@@ -7,6 +7,10 @@ use clap::Parser;
 use bingwallpaper::BingWallpaperArguments;
 use bingwallpaper::BingWallpaperChanger;
 use bingwallpaper::BingWallpaperConfiguration;
+#[cfg(target_os = "windows")]
+use winapi::um::wincon::GetConsoleWindow;
+#[cfg(target_os = "windows")]
+use winapi::um::winuser::{ShowWindow, SW_HIDE};
 
 mod bingwallpaper;
 
@@ -25,6 +29,17 @@ fn main() {
             env::consts::ARCH);
 
         process::exit(0);
+    }
+
+    // If request, hide console
+    #[cfg(target_os = "windows")]
+    if args.nowindow {
+        let window = unsafe { GetConsoleWindow() };
+        if window.is_null() {
+            unsafe {
+                ShowWindow(window, SW_HIDE);
+            }
+        }
     }
 
     // If requested, initialize a new configuration file
