@@ -27,26 +27,27 @@ To compile and install this project, you must ensure that Rust and adequate tool
 
 ## Usage
 
-```shell
+```text
 #> bingwallpaper --help
 Bing wallpaper application arguments
 
 Usage: bingwallpaper [OPTIONS]
 
 Options:
-  -l, --loop
-          Keep application running. Looking for new wallpaper every hours
   -c, --config <CONFIG_FILE>
           Use a custom configuration
   -i, --init-config-file <INIT_CONFIG_FILE>
           Initialize a new configuration file
   -o, --download-only
           Download wallpaper, but dont try to change it automatically
+  -l, --loop
+          Keep application running. Looking for new wallpaper every hours
+  -w, --nowindow
+          Don't display console when not run from a CLI (Windows Only)
   -v, --version
           Display application version
   -h, --help
           Print help
-
 ```
 
 
