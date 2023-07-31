@@ -35,7 +35,7 @@ fn main() {
     #[cfg(target_os = "windows")]
     if args.nowindow {
         let window = unsafe { GetConsoleWindow() };
-        if window.is_null() {
+        if !window.is_null() {
             unsafe {
                 ShowWindow(window, SW_HIDE);
             }
