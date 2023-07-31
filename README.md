@@ -95,6 +95,8 @@ Before attempting to automate the process (see below), it is advisable to run it
 
 ### Linux
 
+On Linux, there are several possibilities. As I can't list them all, you'll have to choose the one that seems best suited to you (crontab, gnome start at launch, etc.).
+
 ```shell
 #> crontab -e
 ```
