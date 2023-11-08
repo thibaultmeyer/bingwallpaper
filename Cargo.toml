@@ -15,12 +15,12 @@ publish = false
 
 
 [dependencies]
-chrono = "0.4.26"
-clap = { version = "4.3.19", features = ["derive"] }
+chrono = "0.4.31"
+clap = { version = "4.4.7", features = ["derive"] }
 confy = "0.5.1"
-reqwest = { version = "0.11.18", features = ["blocking", "json"] }
-serde = "1.0.174"
-serde_derive = "1.0.174"
+reqwest = { version = "0.11.22", features = ["blocking", "json"] }
+serde = "1.0.192"
+serde_derive = "1.0.192"
 winit = "0.28.6"
 
 
