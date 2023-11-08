@@ -177,19 +177,21 @@ impl BingWallpaperChanger {
         // the new wallpaper is the same as the old one.
         let tmp_filename = format!("/tmp/{0}", self.get_date_system());
         fs::copy(self.configuration.target_filename.as_str(), &tmp_filename).unwrap();
-        Command::new("swift")
+        let mut child = Command::new("swift")
             .arg("/tmp/bingwallpaper.swift")
             .arg(&tmp_filename)
             .spawn()
             .expect("Can't change wallpaper");
+        child.wait().expect("Can't wait for child process");
         std::thread::sleep(std::time::Duration::from_millis(250));
 
         // Uses the real file
-        Command::new("swift")
+        let mut child = Command::new("swift")
             .arg("/tmp/bingwallpaper.swift")
             .arg(&self.configuration.target_filename)
             .spawn()
             .expect("Can't change wallpaper");
+        child.wait().expect("Can't wait for child process");
 
         std::thread::sleep(std::time::Duration::from_secs(1));
         fs::remove_file(&tmp_filename).unwrap();
