@@ -147,13 +147,14 @@ impl BingWallpaperChanger {
     /// Changes the wallpaper with the given picture on Linux.
     #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd"))]
     fn change_wallpaper_linux(&self) {
-        Command::new("gsettings")
+        let mut child = Command::new("gsettings")
             .arg("set")
             .arg("org.gnome.desktop.background")
             .arg("picture-uri")
             .arg(&self.configuration.target_filename)
             .spawn()
             .expect("Can't change wallpaper");
+        child.wait().expect("Can't wait for child process");
     }
 
     /// Changes the wallpaper with the given picture on MacOS.
