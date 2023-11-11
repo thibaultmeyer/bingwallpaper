@@ -76,6 +76,7 @@ impl BingWallpaperChanger {
 
         // Checks if current downloaded wallpaper is up to date
         if system_date_as_str == wallpaper_date_as_str {
+            // TODO: Probably no longer needed
             return self.change_wallpaper();
         }
 
@@ -166,9 +167,13 @@ impl BingWallpaperChanger {
         // Read more: https://developer.apple.com/documentation/appkit/nsscreen/1388393-screens
         file.write_all("import Cocoa
             do {
+                // Useless as the downloaded image is exactly the same size as the screen.
+                // But it does force Dock to update the wallpaper.
+                let randomScaling = Int.random(in: 0 ..< 5)
+
                 for screen in NSScreen.screens {
                     let url = URL(fileURLWithPath: CommandLine.arguments[1])
-                    try NSWorkspace.shared.setDesktopImageURL(url, for: screen, options: [:])
+                    try NSWorkspace.shared.setDesktopImageURL(url, for: screen, options: [NSWorkspace.DesktopImageOptionKey.imageScaling: randomScaling])
                 }
             } catch {
                 print(error)
