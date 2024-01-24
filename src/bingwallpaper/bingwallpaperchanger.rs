@@ -12,11 +12,14 @@ use std::process::Command;
 use std::time::SystemTime;
 
 use chrono::{DateTime, Utc};
-
 #[cfg(target_os = "windows")]
 use winapi::ctypes::c_void;
 #[cfg(target_os = "windows")]
 use winapi::um::winuser;
+#[cfg(target_os = "windows")]
+use winvd::{get_desktop_count, get_desktops};
+#[cfg(target_os = "windows")]
+use winver::WindowsVersion;
 
 use crate::bingwallpaper::{BingAPIClient, BingWallpaperConfiguration};
 
@@ -202,15 +205,47 @@ impl BingWallpaperChanger {
     /// Changes the wallpaper with the given picture on Windows.
     #[cfg(target_os = "windows")]
     fn change_wallpaper_windows(&self) {
-        let image_path = CString::new(String::from(&self.configuration.target_filename)).unwrap();
+        let win_version = WindowsVersion::detect().unwrap();
 
+        if win_version >= WindowsVersion::new(10, 0, 22621) && get_desktop_count().unwrap() > 1 {
+            if let Err(error) = self.change_wallpaper_windows_virtualdesktop() {
+                println!("Something goes wrong with Virtual Desktop API. Fallback to legacy Windows API\n{:?}", error);
+                self.change_wallpaper_windows_winuser();
+            }
+        } else {
+            self.change_wallpaper_windows_winuser();
+        }
+    }
+
+    /// Changes the wallpaper with the given picture on Windows using the Virtual Desktop API.
+    #[cfg(target_os = "windows")]
+    fn change_wallpaper_windows_virtualdesktop(&self) -> Result<(), String> {
+        if let Ok(detected_desktops) = get_desktops() {
+            for desktop in detected_desktops {
+                if let Err(error) = desktop.set_wallpaper(&self.configuration.target_filename) {
+                    return Err(format!(
+                        "Can't change Virtual Desktop wallpaper for #{:?}\n{:?}",
+                        desktop.get_id().unwrap(),
+                        error));
+                }
+            }
+
+            Ok(())
+        } else {
+            Err("Can't detect Virtual Desktop ".to_string())
+        }
+    }
+
+    /// Changes the wallpaper with the given picture on Windows using the legacy Windows API.
+    #[cfg(target_os = "windows")]
+    fn change_wallpaper_windows_winuser(&self) {
+        let image_path = CString::new(String::from(&self.configuration.target_filename)).unwrap();
         unsafe {
             winuser::SystemParametersInfoA(
                 winuser::SPI_SETDESKWALLPAPER,
                 0,
                 image_path.as_ptr() as *mut c_void,
-                winuser::SPIF_UPDATEINIFILE,
-            );
+                winuser::SPIF_UPDATEINIFILE);
         }
     }
 }
