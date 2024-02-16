@@ -158,6 +158,15 @@ impl BingWallpaperChanger {
             .spawn()
             .expect("Can't change wallpaper");
         child.wait().expect("Can't wait for child process");
+
+        let mut child = Command::new("gsettings")
+            .arg("set")
+            .arg("org.gnome.desktop.background")
+            .arg("picture-uri-dark")
+            .arg(&self.configuration.target_filename)
+            .spawn()
+            .expect("Can't change wallpaper");
+        child.wait().expect("Can't wait for child process");
     }
 
     /// Changes the wallpaper with the given picture on MacOS.
