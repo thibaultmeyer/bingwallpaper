@@ -7,11 +7,11 @@ use std::fs::File;
 #[cfg(target_os = "macos")]
 use std::io::Write;
 use std::path::Path;
-#[cfg(not(target_os = "windows"))]
 use std::process::Command;
 use std::time::SystemTime;
 
 use chrono::{DateTime, Utc};
+
 #[cfg(target_os = "windows")]
 use winapi::ctypes::c_void;
 #[cfg(target_os = "windows")]
@@ -132,19 +132,55 @@ impl BingWallpaperChanger {
 
     /// Change wallpaper.
     fn change_wallpaper(&self) -> Result<(), String> {
-        #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd"))] {
-            self.change_wallpaper_linux();
-        }
+        if self.configuration.exec_apply_wallpaper.is_some() {
+            self.exec_apply_wallpaper();
+        } else {
+            #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd"))] {
+                self.change_wallpaper_linux();
+            }
 
-        #[cfg(target_os = "macos")] {
-            self.change_wallpaper_macos();
-        }
+            #[cfg(target_os = "macos")] {
+                self.change_wallpaper_macos();
+            }
 
-        #[cfg(target_os = "windows")] {
-            self.change_wallpaper_windows();
+            #[cfg(target_os = "windows")] {
+                self.change_wallpaper_windows();
+            }
         }
 
         Ok(())
+    }
+
+    /// Changes the wallpaper by executing custom command
+    fn exec_apply_wallpaper(&self) {
+        // Replaces all variables
+        let mut cmd_as_str = self.configuration.exec_apply_wallpaper.clone().unwrap();
+        cmd_as_str = str::replace(&cmd_as_str, "{target_filename}", &self.configuration.target_filename);
+        cmd_as_str = str::replace(&cmd_as_str, "{image_dimension_width}", &self.configuration.image_dimension_width.to_string());
+        cmd_as_str = str::replace(&cmd_as_str, "{image_dimension_height}", &self.configuration.image_dimension_height.to_string());
+
+        // Prepares command to run
+        if !cmd_as_str.is_empty() {
+            let mut cmd_to_run;
+            let cmd_tokens = cmd_as_str.split_whitespace();
+
+            if cmd_as_str.len() == 1 {
+                cmd_to_run = Command::new(cmd_as_str);
+            } else {
+                let mut it = cmd_tokens.into_iter().peekable();
+
+                cmd_to_run = Command::new(it.next().unwrap());
+                while it.peek().is_some() {
+                    cmd_to_run.arg(it.next().unwrap());
+                }
+            }
+
+            // Run command
+            let mut child = cmd_to_run
+                .spawn()
+                .expect("Can't change wallpaper");
+            child.wait().expect("Can't wait for child process");
+        }
     }
 
     /// Changes the wallpaper with the given picture on Linux.
