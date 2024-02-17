@@ -12,7 +12,8 @@ Bing wallpaper of the day
 
 
 ## Build & install from sources
-To compile and install this project, you must ensure that Rust and adequate toolchain are being correctly installed.
+To compile and install this project, you must ensure that Rust and adequate toolchain
+are being correctly installed.
 
 ```shell
 #> cargo build --release
@@ -54,7 +55,8 @@ Options:
 
 ## First run
 
-First of all, you need to generate the configuration file. To do this, simply run the following command:
+First of all, you need to generate the configuration file. To do this, simply run
+the following command:
 
 
 **Linux or MacOS**
@@ -68,9 +70,12 @@ First of all, you need to generate the configuration file. To do this, simply ru
 #> bingwallpaper --init-config-file C:/Users/<USERNAME>/.bingwallpaper.conf
 ```
 
-The application will try to detect the right settings for your operating system and screen resolution. It is still advisable to check that the information is correct before continuing.
+The application will try to detect the right settings for your operating system and
+screen resolution. It is still advisable to check that the information is correct
+before continuing.
 
-Once the configuration file has been checked. Run the following command to change the background.
+Once the configuration file has been checked. Run the following command to change the
+background.
 
 ```shell
 #> bingwallpaper [--loop] [--config <alternative cfg file>]
@@ -91,12 +96,14 @@ Once the configuration file has been checked. Run the following command to chang
 
 ## Change wallpaper automatically
 
-Before attempting to automate the process (see below), it is advisable to run it manually at least once to check that everything is working correctly.
+Before attempting to automate the process (see below), it is advisable to run it
+manually at least once to check that everything is working correctly.
 
 
 ### Linux
 
-On Linux, there are several possibilities. As I can't list them all, you'll have to choose the one that seems best suited to you (crontab, gnome start at launch, etc.).
+On Linux, there are several possibilities. As I can't list them all, you'll have to
+choose the one that seems best suited to you (crontab, gnome start at launch, etc.).
 
 ```shell
 #> crontab -e
@@ -135,6 +142,17 @@ On Linux, there are several possibilities. As I can't list them all, you'll have
 
 
 
+## Known issues / limitations
+
+* [WINDOWS] Parameter `--nowindow` (or `-w`) not working if you use Terminal as default
+  console. Terminal don't honor Windows API and don't allow application to detach from
+  terminal. As workaround, you could create a shortcut and configure it to enable the
+  option "legacy console"
+* [LINUX] Only Gnome is currently supported
+
+
+
+
 ## License
 This project is released under terms of the [MIT license](https://github.com/thibaultmeyer/bingwallpaper/blob/master/LICENSE).
 
@@ -142,4 +160,5 @@ This project is released under terms of the [MIT license](https://github.com/thi
 
 ## Third party
 Logo is from [Flaticon](https://www.flaticon.com) with
-free usage for personal and commercial purpose. <a href="https://www.flaticon.com/free-icons/gallery" title="gallery icons">Gallery icons created by logisstudio - Flaticon</a>
+free usage for personal and commercial purpose.
+<a href="https://www.flaticon.com/free-icons/gallery" title="gallery icons">Gallery icons created by logisstudio - Flaticon</a>
