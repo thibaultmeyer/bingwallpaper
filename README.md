@@ -149,6 +149,7 @@ choose the one that seems best suited to you (crontab, gnome start at launch, et
 
 * [LINUX] Only Gnome is natively supported, to use this application with another Desktop
   Environment, you have to use `exec_apply_wallpaper` option in the configuration file
+* [MACOS] Dock, don't refresh wallpaper. This application have a workaround (but sometime Dock wins)
 * [WINDOWS] Parameter `--nowindow` (or `-w`) not working if you use Terminal as default
   console. Terminal don't honor Windows API and don't allow application to detach from
   terminal. As workaround, you could create a shortcut and configure it to enable the

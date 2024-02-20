@@ -208,6 +208,7 @@ impl BingWallpaperChanger {
     /// Changes the wallpaper with the given picture on MacOS.
     #[cfg(target_os = "macos")]
     fn change_wallpaper_macos(&self) {
+        // TODO: copy file with unique filename (hidden file) and apply it!
         // Writes script SWIFT used to change wallpaper into temporary location
         let swift_script_path = Path::new("/tmp/bingwallpaper.swift");
         let mut file = File::create(swift_script_path).unwrap();
@@ -224,7 +225,23 @@ impl BingWallpaperChanger {
 
         // MacOS does not refresh the screen if the file name of
         // the new wallpaper is the same as the old one.
-        let tmp_filename = format!("/tmp/{0}", self.get_date_system());
+        let target_filename_as_path = Path::new(&self.configuration.target_filename);
+        let tmp_filename_prefix = format!(
+            "{0}/._{1}_",
+            target_filename_as_path.parent().unwrap().to_str().unwrap(),
+            target_filename_as_path.file_name().unwrap().to_str().unwrap());
+
+        // Delete old temporary wallpapers
+        for dir_entry in fs::read_dir(target_filename_as_path.parent().unwrap()).unwrap() {
+            let path = dir_entry.unwrap().path();
+            let path_as_str = path.to_str().unwrap();
+            if path_as_str.starts_with(&tmp_filename_prefix) {
+                fs::remove_file(path).unwrap();
+            }
+        }
+
+        // Apply new temporary wallpaper
+        let tmp_filename = format!("{0}{1}", tmp_filename_prefix, self.get_date_system());
         fs::copy(self.configuration.target_filename.as_str(), &tmp_filename).unwrap();
         let mut child = Command::new("swift")
             .arg("/tmp/bingwallpaper.swift")
@@ -234,16 +251,6 @@ impl BingWallpaperChanger {
         child.wait().expect("Can't wait for child process");
         std::thread::sleep(std::time::Duration::from_millis(250));
 
-        // Uses the real file
-        let mut child = Command::new("swift")
-            .arg("/tmp/bingwallpaper.swift")
-            .arg(&self.configuration.target_filename)
-            .spawn()
-            .expect("Can't change wallpaper");
-        child.wait().expect("Can't wait for child process");
-
-        std::thread::sleep(std::time::Duration::from_secs(1));
-        fs::remove_file(&tmp_filename).unwrap();
         fs::remove_file(swift_script_path).unwrap();
     }
 
