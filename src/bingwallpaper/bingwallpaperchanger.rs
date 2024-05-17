@@ -1,3 +1,5 @@
+#[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd"))]
+use std::env;
 #[cfg(target_os = "windows")]
 use std::ffi::CString;
 #[cfg(target_os = "macos")]
@@ -186,23 +188,38 @@ impl BingWallpaperChanger {
     /// Changes the wallpaper with the given picture on Linux.
     #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd"))]
     fn change_wallpaper_linux(&self) {
-        let mut child = Command::new("gsettings")
-            .arg("set")
-            .arg("org.gnome.desktop.background")
-            .arg("picture-uri")
-            .arg(&self.configuration.target_filename)
-            .spawn()
-            .expect("Can't change wallpaper");
-        child.wait().expect("Can't wait for child process");
+        let session = env::var("DESKTOP_SESSION").unwrap();
 
-        let mut child = Command::new("gsettings")
-            .arg("set")
-            .arg("org.gnome.desktop.background")
-            .arg("picture-uri-dark")
-            .arg(&self.configuration.target_filename)
-            .spawn()
-            .expect("Can't change wallpaper");
-        child.wait().expect("Can't wait for child process");
+        if session.eq("cinnamon") {
+            // Cinnamon
+            let mut child = Command::new("gsettings")
+                .arg("set")
+                .arg("org.cinnamon.desktop.background")
+                .arg("picture-uri")
+                .arg(format!("file://{}", &self.configuration.target_filename))
+                .spawn()
+                .expect("Can't change wallpaper");
+            child.wait().expect("Can't wait for child process");
+        } else {
+            // Gnome
+            let mut child = Command::new("gsettings")
+                .arg("set")
+                .arg("org.gnome.desktop.background")
+                .arg("picture-uri")
+                .arg(&self.configuration.target_filename)
+                .spawn()
+                .expect("Can't change wallpaper");
+            child.wait().expect("Can't wait for child process");
+
+            let mut child = Command::new("gsettings")
+                .arg("set")
+                .arg("org.gnome.desktop.background")
+                .arg("picture-uri-dark")
+                .arg(&self.configuration.target_filename)
+                .spawn()
+                .expect("Can't change wallpaper");
+            child.wait().expect("Can't wait for child process");
+        };
     }
 
     /// Changes the wallpaper with the given picture on MacOS.
