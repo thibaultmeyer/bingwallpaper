@@ -15,11 +15,15 @@ jobs:
             -   name: Clone repository
                 uses: actions/checkout@v3
 
-            -   name: Build
-                uses: actions-rs/cargo@v1
+            -   name: Create Build Environment
+                uses: actions-rust-lang/setup-rust-toolchain@v1
                 with:
-                    command: build
-                    args: --release
+                    toolchain: stable
+
+            -   name: Build
+                working-directory: ${{github.workspace}}
+                shell: bash
+                run: cargo build --release
 
             -   name: Minify binary
                 working-directory: ${{github.workspace}}/target/release/
@@ -75,11 +79,15 @@ jobs:
             -   name: Clone repository
                 uses: actions/checkout@v3
 
-            -   name: Build
-                uses: actions-rs/cargo@v1
+            -   name: Create Build Environment
+                uses: actions-rust-lang/setup-rust-toolchain@v1
                 with:
-                    command: build
-                    args: --release
+                    toolchain: stable
+
+            -   name: Build
+                working-directory: ${{github.workspace}}
+                shell: bash
+                run: cargo build --release
 
             -   name: Minify binary
                 working-directory: ${{github.workspace}}/target/release/
@@ -135,11 +143,14 @@ jobs:
             -   name: Clone repository
                 uses: actions/checkout@v3
 
-            -   name: Build
-                uses: actions-rs/cargo@v1
+            -   name: Create Build Environment
+                uses: actions-rust-lang/setup-rust-toolchain@v1
                 with:
-                    command: build
-                    args: --release
+                    toolchain: stable
+
+            -   name: Build
+                shell: pwsh
+                run: cargo build --release
 
             -   name: Add Icon
                 working-directory: ${{github.workspace}}/target/release/

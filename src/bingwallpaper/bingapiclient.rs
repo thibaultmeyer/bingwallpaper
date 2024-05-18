@@ -107,7 +107,7 @@ impl BingAPIClient {
         };
 
         // Returns the latest image
-        let image = image_archive.images.get(0).unwrap();
+        let image = image_archive.images.first().unwrap();
 
         Ok(BingAPIImagesArchiveImage {
             url: image.url.clone(),
