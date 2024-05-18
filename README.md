@@ -147,8 +147,9 @@ choose the one that seems best suited to you (crontab, gnome start at launch, et
 
 ## Known issues / limitations
 
-* [LINUX] Only Gnome is natively supported, to use this application with another Desktop
-  Environment, you have to use `exec_apply_wallpaper` option in the configuration file
+* [LINUX] Only Gnome and Cinnamon are natively supported, to use this application with 
+  another Desktop Environment, you have to use `exec_apply_wallpaper` option in the
+  configuration file
 * [MAC] Sometime, "Dock" refuse to refresh wallpaper when you are using an application 
   in fullscreen when bingwallpaper try to update wallpaper
 * [WINDOWS] Parameter `--nowindow` (or `-w`) not working if you use Terminal as default
