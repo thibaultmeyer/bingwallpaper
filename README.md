@@ -42,7 +42,8 @@ Options:
   -o, --download-only
           Download wallpaper, but dont try to change it automatically
   -l, --loop
-          Keep application running. Looking for new wallpaper every hours
+          Keep application running. Looking for new wallpaper every 900 seconds (15 minutes).
+          You can override value with `loop_interval_second` in your configuration file.
   -w, --nowindow
           Don't display console when not run from a CLI (Windows Only)
   -v, --version
@@ -85,6 +86,7 @@ background.
 
 ## Configuration file
 
+* `loop_interval_second` The interval in seconds between two wallpaper update attempts. Default value is `900`
 * `image_dimension_width` The "width" dimension of the wallpaper
 * `image_dimension_height` The "height" dimension of the wallpaper
 * `target_filename` The location where is stored the wallpaper

@@ -9,6 +9,7 @@ use winit::window::WindowBuilder;
 /// Bing wallpaper application configuration
 #[derive(Serialize, Deserialize)]
 pub struct BingWallpaperConfiguration {
+    pub(crate) loop_interval_second: Option<u64>,
     pub(crate) image_dimension_width: u32,
     pub(crate) image_dimension_height: u32,
     pub(crate) target_filename: String,
@@ -21,6 +22,7 @@ pub struct BingWallpaperConfiguration {
 impl Default for BingWallpaperConfiguration {
     fn default() -> Self {
         Self {
+            loop_interval_second: 900.into(),
             image_dimension_height: 1080,
             image_dimension_width: 1920,
             target_filename: "/tmp/bingwallpaper.png".into(),
