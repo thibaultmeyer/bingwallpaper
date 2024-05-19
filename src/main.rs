@@ -48,8 +48,11 @@ fn main() {
         process::exit(0);
     }
 
-    // Creates BingWallpaperChanger instance
+    // Load configuration file
     let config = BingWallpaperConfiguration::load(args.config_file);
+    let sleep_duration_sec = config.loop_interval_second;
+
+    // Creates BingWallpaperChanger instance
     let bing_wallpaper_changer = BingWallpaperChanger::new(config);
 
     // Run
@@ -64,7 +67,7 @@ fn main() {
                     println!("Can't change wallpaper: {:?}", error);
                 }
 
-                sleep(Duration::from_secs(900));
+                sleep(Duration::from_secs(sleep_duration_sec.unwrap_or(900)));
             }
         }).unwrap();
 

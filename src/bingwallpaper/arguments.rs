@@ -17,7 +17,7 @@ pub struct BingWallpaperArguments {
     pub(crate) download_only: bool,
 
     /// If `true`, the application must continue to looking for new version of the image to use as wallpaper.
-    #[clap(long = "loop", short = 'l', help = "Keep application running. Looking for new wallpaper every hours")]
+    #[clap(long = "loop", short = 'l', help = "Keep application running. Looking for new wallpaper every 900 seconds (15 minutes)\nYou can override value with `loop_interval_second` in the configuration file")]
     pub(crate) must_loop: bool,
 
     /// If `true`, the application will don't display console
