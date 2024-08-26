@@ -90,6 +90,10 @@ background.
 * `image_dimension_width` The "width" dimension of the wallpaper
 * `image_dimension_height` The "height" dimension of the wallpaper
 * `target_filename` The location where is stored the wallpaper
+* `text_overlay_position` (OPTIONAL) Add text overlay containing information about the picture. Value must be 
+   surrounded with simple quote. Accepted values are: `BOTTOM_LEFT`, `BOTTOM_RIGHT`, `TOP_LEFT`, `TOP_RIGHT`
+* `text_overlay_position_offset_x` (OPTIONAL) Applies an offset on the X-axis of the text overlay.
+* `text_overlay_position_offset_y` (OPTIONAL) Applies an offset on the Y-axis of the text overlay.
 * `exec_apply_wallpaper` (OPTIONAL) Command to execute for applying wallpaper, the
    string accept following variables: `image_dimension_width`, `image_dimension_height`, 
    and `target_filename`

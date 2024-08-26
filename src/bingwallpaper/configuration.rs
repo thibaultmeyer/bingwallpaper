@@ -13,6 +13,9 @@ pub struct BingWallpaperConfiguration {
     pub(crate) image_dimension_width: u32,
     pub(crate) image_dimension_height: u32,
     pub(crate) target_filename: String,
+    pub(crate) text_overlay_position: Option<String>,
+    pub(crate) text_overlay_position_offset_x: Option<u32>,
+    pub(crate) text_overlay_position_offset_y: Option<u32>,
     pub(crate) exec_apply_wallpaper: Option<String>,
     pub(crate) proxy_url: Option<String>,
 }
@@ -25,7 +28,10 @@ impl Default for BingWallpaperConfiguration {
             loop_interval_second: 900.into(),
             image_dimension_height: 1080,
             image_dimension_width: 1920,
-            target_filename: "/tmp/bingwallpaper.png".into(),
+            target_filename: "/tmp/bingwallpaper.jpg".into(),
+            text_overlay_position: None,
+            text_overlay_position_offset_x: None,
+            text_overlay_position_offset_y: None,
             exec_apply_wallpaper: None,
             proxy_url: None,
         }
