@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd"))]
 use std::env;
 #[cfg(target_os = "windows")]
@@ -11,9 +12,6 @@ use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 use std::time::SystemTime;
-
-use chrono::{DateTime, Utc};
-
 #[cfg(target_os = "windows")]
 use winapi::ctypes::c_void;
 #[cfg(target_os = "windows")]
@@ -23,7 +21,7 @@ use winvd::{get_desktop_count, get_desktops};
 #[cfg(target_os = "windows")]
 use winver::WindowsVersion;
 
-use crate::bingwallpaper::{BingAPIClient, BingWallpaperConfiguration};
+use crate::bingwallpaper::{BingAPIClient, BingWallpaperConfiguration, TextOverlay};
 
 /// Retrieves from Bing API and applies the wallpaper of the day.
 ///
@@ -43,7 +41,7 @@ impl BingWallpaperChanger {
     /// Creates a new instance.
     ///
     /// Arguments
-    /// * `configuration` - The configuration to use
+    /// * `configuration` - The Bing Wallpaper configuration to use
     ///
     /// # Examples
     ///
@@ -102,6 +100,9 @@ impl BingWallpaperChanger {
             self.bing_api_client.download_image(&bing_image, &self.configuration.target_filename)?;
         }
 
+        // Overlay
+        TextOverlay::apply_overlay(&self.configuration, bing_image.title, bing_image.copyright);
+
         // Change current wallpaper (if requested)
         if must_change_wallpaper {
             return self.change_wallpaper();
@@ -118,7 +119,7 @@ impl BingWallpaperChanger {
 
     /// Returns the date (UTC) as a String following the format "%Y%m%d" of the current wallpaper.
     ///
-    /// In case of current wallpaper does not exists, "00000000" will be return.
+    /// In case of current wallpaper does not exist, "00000000" will be return.
     fn get_date_current_wallpaper(&self) -> String {
         match Path::new(self.configuration.target_filename.as_str()).metadata() {
             Err(_) => String::from("00000000"),
@@ -137,7 +138,12 @@ impl BingWallpaperChanger {
         if self.configuration.exec_apply_wallpaper.is_some() {
             self.exec_apply_wallpaper();
         } else {
-            #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd"))] {
+            #[cfg(any(
+                target_os = "linux",
+                target_os = "freebsd",
+                target_os = "netbsd",
+                target_os = "openbsd"
+            ))] {
                 self.change_wallpaper_linux();
             }
 
@@ -186,7 +192,12 @@ impl BingWallpaperChanger {
     }
 
     /// Changes the wallpaper with the given picture on Linux.
-    #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "netbsd", target_os = "openbsd"))]
+    #[cfg(any(
+        target_os = "linux",
+        target_os = "freebsd",
+        target_os = "netbsd",
+        target_os = "openbsd"
+    ))]
     fn change_wallpaper_linux(&self) {
         let session = env::var("DESKTOP_SESSION").unwrap();
 

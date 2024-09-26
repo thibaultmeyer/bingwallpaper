@@ -15,9 +15,12 @@ publish = false
 
 
 [dependencies]
+ab_glyph = "0.2.28"
 chrono = "0.4.38"
 clap = { version = "4.5.4", features = ["derive"] }
 confy = "0.6.1"
+image = "0.25.2"
+imageproc = "0.25.0"
 reqwest = { version = "0.12.4", features = ["blocking", "json"] }
 serde = "1.0.202"
 serde_derive = "1.0.202"
