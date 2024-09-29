@@ -89,7 +89,7 @@ background.
 * `loop_interval_second` The interval in seconds between two wallpaper update attempts. Default value is `900`
 * `image_dimension_width` The "width" dimension of the wallpaper
 * `image_dimension_height` The "height" dimension of the wallpaper
-* `target_filename` The location where is stored the wallpaper
+* `target_filename` The location where is stored the wallpaper. File extension must be `.jpg`
 * `text_overlay_position` (OPTIONAL) Add text overlay containing information about the picture. Value must be 
    surrounded with simple quote. Accepted values are: `BOTTOM_LEFT`, `BOTTOM_RIGHT`, `TOP_LEFT`, `TOP_RIGHT`
 * `text_overlay_position_offset_x` (OPTIONAL) Applies an offset on the X-axis of the text overlay.
