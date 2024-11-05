@@ -13,6 +13,8 @@ keywords = ["bing-wallpaper", "wallpaper", "wallpaper-changer", "bing-wallpaper-
 include = ["/src", "LICENSE"]
 publish = false
 
+[profile.release]
+lto = true
 
 [dependencies]
 ab_glyph = "0.2.28"
