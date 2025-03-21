@@ -4,7 +4,6 @@ use std::path::{Path, PathBuf};
 use serde_derive::{Deserialize, Serialize};
 use winit::dpi::PhysicalSize;
 use winit::event_loop::EventLoop;
-use winit::window::WindowBuilder;
 
 /// Bing wallpaper application configuration
 #[derive(Serialize, Deserialize)]
@@ -61,12 +60,10 @@ impl BingWallpaperConfiguration {
 
         // Tries to detect best values for image dimensions
         let event_loop = EventLoop::new();
-        if let Ok(window) = WindowBuilder::new().build(&event_loop) {
-            let monitor_size: PhysicalSize<u32> = window.available_monitors().max().unwrap().size();
-
-            config.image_dimension_width = monitor_size.width;
-            config.image_dimension_height = monitor_size.height;
-        }
+        let monitor_size: PhysicalSize<u32> = event_loop.unwrap().available_monitors().max().unwrap().size();
+        
+        config.image_dimension_width = monitor_size.width;
+        config.image_dimension_height = monitor_size.height;
 
         println!("  > Wallpaper dimension: {}x{}", config.image_dimension_width, config.image_dimension_height);
 
