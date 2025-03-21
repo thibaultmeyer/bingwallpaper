@@ -83,12 +83,9 @@ impl BingWallpaperChanger {
         }
 
         // Retrieves information from Bing API
-        let bing_image = match self.bing_api_client.retrieve_latest_image(
+        let bing_image = self.bing_api_client.retrieve_latest_image(
             self.configuration.image_dimension_width,
-            self.configuration.image_dimension_height) {
-            Err(error) => return Err(error),
-            Ok(obj) => obj,
-        };
+            self.configuration.image_dimension_height)?;
 
         println!("Wallpaper information");
         println!("  - Title    : {}", &bing_image.title);

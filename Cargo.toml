@@ -1,6 +1,6 @@
 [package]
 name = "bingwallpaper"
-version = "1.5.1"
+version = "1.5.2"
 edition = "2021"
 
 authors = ["Thibault Meyer"]
@@ -17,19 +17,19 @@ publish = false
 lto = true
 
 [dependencies]
-ab_glyph = "0.2.28"
-chrono = "0.4.38"
-clap = { version = "4.5.4", features = ["derive"] }
+ab_glyph = "0.2.29"
+chrono = "0.4.40"
+clap = { version = "4.5.32", features = ["derive"] }
 confy = "0.6.1"
-image = "0.25.2"
+image = "0.25.5"
 imageproc = "0.25.0"
-reqwest = { version = "0.12.4", features = ["blocking", "json"] }
-serde = "1.0.202"
-serde_derive = "1.0.202"
-winit = "0.28.7"
+reqwest = { version = "0.12.12", features = ["blocking", "json"] }
+serde = "1.0.219"
+serde_derive = "1.0.219"
+winit = "0.29.15"
 
 
 [target.'cfg(windows)'.dependencies]
 winapi = { version = "0.3.9", features = ["wincon", "winuser"] }
 winver = "1.0.0"
-winvd = "0.0.45"
+winvd = "0.0.48"
